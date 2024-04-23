@@ -106,6 +106,10 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
+  if (to.path === "/register") {
+    next();
+    return;
+  }
   const userStore = useUserStore(); // 获取用户存储对象
   // 获取用户角色
   const userRole = userStore.getUser.role;
