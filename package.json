@@ -1,0 +1,49 @@
+{
+  "name": "filefront",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.10.2",
+    "@vueup/vue-quill": "^1.0.0-beta.7",
+    "assert": "^2.1.0",
+    "axios": "^0.24.0",
+    "core-js": "^3.8.3",
+    "echarts": "^4.7.0",
+    "element-plus": "^2.2.2",
+    "module": "^1.2.5",
+    "nprogress": "^0.2.0",
+    "pinia": "^2.1.7",
+    "sass": "^1.32.7",
+    "sass-loader": "^12.0.0",
+    "three": "^0.121.0",
+    "util": "^0.12.5",
+    "vanta": "^0.5.24",
+    "vue": "^3.2.13",
+    "vue-demi": "^0.14.7",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+
+    "@vue/cli-plugin-babel": "~5.0.0",
+
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+
+    "sass": "^1.32.7",
+    "sass-loader": "^12.0.0",
+    "vue-particles": "^1.0.9"
+  },
+  "description": "## Project setup",
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

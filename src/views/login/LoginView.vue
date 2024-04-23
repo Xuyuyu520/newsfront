@@ -1,0 +1,244 @@
+<template>
+  <div class="login">
+    <el-row class="login-page">
+      <el-col :span="16" :offset="3" class="form">
+        <!-- 添加 logo -->
+        <el-col :offset="0" class="logo-container">
+          <img
+            src="https://camo.githubusercontent.com/e30b24e8768c4a5b9386baba74c2352d3f217e767b33c2dea051c7a0fb3e7310/68747470733a2f2f74656368737461636b2d67656e657261746f722e76657263656c2e6170702f6b756265726e657465732d69636f6e2e737667"
+            alt="Logo"
+          />
+        </el-col>
+        <el-form-item>
+          <h1 style="text-align: left; font-size: 60px">大事件新闻管理系统</h1>
+        </el-form-item>
+        <div class="login-main">
+          <div class="login-form-container">
+            <!-- 将登录表单放在中间 -->
+            <div class="login-form">
+              <el-form :model="registerData" :rules="rules">
+                <div class="login-form-title" style="font-size: 30px">
+                  账户密码登录
+                </div>
+                <el-form-item>
+                  <el-input
+                    v-model="user.name"
+                    prefix-icon="Avatar"
+                    placeholder="请输入用户名称"
+                    style="width: 100%"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                    type="password"
+                    v-model="user.password"
+                    prefix-icon="Lock"
+                    show-password
+                    placeholder="请输入密码"
+                    style="width: 100%"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button
+                    type="primary"
+                    round
+                    @click="login_1"
+                    style="width: 100%"
+                    >登录
+                  </el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button
+                    type="primary"
+                    round
+                    @click="reg"
+                    style="width: 100%"
+                    >注册
+                  </el-button>
+                </el-form-item>
+                <p style="color: red; text-align: left">{{ returnMsg }}</p>
+              </el-form>
+            </div>
+          </div>
+        </div>
+      </el-col>
+
+      <!-- 底部链接 -->
+      <el-col
+        class="footer"
+        style="
+          background-color: #0e75b8;
+          color: #fff;
+          width: 500%;
+          padding: 20px;
+        "
+      >
+        <el-col>
+          <a href="mailto:your_admin@example.com" class="button-link"
+            >忘记密码请联系管理员</a
+          >
+          <a
+            href="https://github.com/qianguyihao/Web"
+            target="_blank"
+            style="color: #f56c6c"
+            >前端学习</a
+          >
+          <el-icon><Right /></el-icon>
+          <el-icon><Link /></el-icon>
+          <a
+            href="https://github.com/qianguyihao/Web"
+            target="_blank"
+            style="color: #ff4949"
+            >后端学习</a
+          >
+        </el-col>
+        <el-col>
+          <img
+            style="width: 60px"
+            src="https://camo.githubusercontent.com/af29beac2540834efd4be7e1f215af0d11e287b4cb3fbc40d531457c10db6ef7/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f73756e3032323553554e2f73756e3032323553554e2f6173736574732f696d616765732f6769746875622e77656270"
+            alt="Logo"
+          />
+          我的主页 链接 GitHub：<a
+            href="https://github.com/Chancechance123"
+            target="_blank"
+            style="color: #e6a23c"
+            >Chancechance123</a
+          >
+        </el-col>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+import { onMounted, reactive, toRefs } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { ElMessage } from "element-plus";
+import { useUserStore } from "/src/store/settings.js";
+import Icon from "@/components/Icon.vue";
+
+export default {
+  components: { Icon },
+  props: {
+    //入口参数
+  },
+
+  setup() {
+    //实例化userouter
+    const router = useRouter();
+    //onMounted()生命周期
+    onMounted(() => {});
+    const data = reactive({
+      loginStyle: {
+        height: "",
+      },
+      user: {
+        name: "",
+        password: "",
+        userType: "",
+      },
+      returnMsg: "",
+
+      login_1: () => {
+        axios
+          .post(
+            "login?username=" +
+              data.user.name +
+              "&password=" +
+              data.user.password
+          )
+          .then((response) => {
+            var temps = response.data;
+            debugger;
+            if (temps.code == 0) {
+              ElMessage.success({
+                message: "登录成功",
+                type: "success",
+              });
+              const userStore = useUserStore();
+              userStore.setUser(temps.data);
+              router.push({ path: "/home" });
+            } else {
+              data.returnMsg = temps.msg;
+            }
+          })
+          .catch((error) => console.log(error)); // 请求失败处理
+      },
+
+      reg: () => {
+        router.push({
+          path: "register",
+        });
+      },
+    });
+
+    return {
+      ...toRefs(data),
+    };
+  },
+};
+</script>
+
+<style lang="scss" scoped="scoped">
+.logo-container {
+  width: 65px;
+  height: 65px;
+  max-width: 100%;
+}
+
+.login {
+  background-image: url("https://pic3.zhimg.com/v2-3b83e03ec8352b504e7a3dab903a9c66_r.jpg");
+  background-size: 100% 100%;
+  background-size: cover;
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: last;
+
+  .el-card__body {
+    padding: 0;
+    background-color: transparent;
+
+    .footer {
+      border: none; /* 去掉边框 */
+    }
+  }
+
+  .login-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .login-form {
+      width: 40rem;
+      height: 250px;
+
+      .login-form-title {
+        margin-top: 100px;
+        font-size: 18px;
+        font-weight: 70;
+        text-align: center;
+        padding-bottom: 2rem;
+      }
+    }
+  }
+}
+
+.button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #e6a23c;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none; /* 去掉边框 */
+}
+
+.button-link:hover {
+  background-color: #40a9ff;
+}
+</style>
