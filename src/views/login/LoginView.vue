@@ -1,26 +1,28 @@
 <template>
-  <div class="login">
-    <el-row class="login-page">
+  <el-row class="login" style="height: 100vh">
+    <el-col class="login-page">
       <el-col :span="16" :offset="3" class="form">
-        <!-- 添加 logo -->
-        <el-col :offset="0" class="logo-container">
-          <img
-            src="https://camo.githubusercontent.com/e30b24e8768c4a5b9386baba74c2352d3f217e767b33c2dea051c7a0fb3e7310/68747470733a2f2f74656368737461636b2d67656e657261746f722e76657263656c2e6170702f6b756265726e657465732d69636f6e2e737667"
-            alt="Logo"
-          />
-        </el-col>
         <el-form-item>
-          <h1 style="text-align: left; font-size: 60px">大事件新闻管理系统</h1>
+          <!-- 添加 logo -->
+          <el-col :offset="0" class="logo-container" style="max-width: 16%">
+            <img
+              src="https://camo.githubusercontent.com/e30b24e8768c4a5b9386baba74c2352d3f217e767b33c2dea051c7a0fb3e7310/68747470733a2f2f74656368737461636b2d67656e657261746f722e76657263656c2e6170702f6b756265726e657465732d69636f6e2e737667"
+              alt="Logo"
+            />
+          </el-col>
+          <el-col style="text-align: center; font-size: 60px"
+            >大事件新闻管理系统
+          </el-col>
         </el-form-item>
         <div class="login-main">
           <div class="login-form-container">
             <!-- 将登录表单放在中间 -->
             <div class="login-form">
-              <el-form :model="registerData" :rules="rules">
+              <el-form :model="user" :rules="rules" ref="form">
                 <div class="login-form-title" style="font-size: 30px">
                   账户密码登录
                 </div>
-                <el-form-item>
+                <el-form-item prop="name">
                   <el-input
                     v-model="user.name"
                     prefix-icon="Avatar"
@@ -28,7 +30,7 @@
                     style="width: 100%"
                   ></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="password">
                   <el-input
                     type="password"
                     v-model="user.password"
@@ -69,7 +71,8 @@
         style="
           background-color: #0e75b8;
           color: #fff;
-          width: 500%;
+          width: 100%;
+          margin: 30px;
           padding: 20px;
         "
       >
@@ -83,8 +86,12 @@
             style="color: #f56c6c"
             >前端学习</a
           >
-          <el-icon><Right /></el-icon>
-          <el-icon><Link /></el-icon>
+          <el-icon>
+            <Right />
+          </el-icon>
+          <el-icon>
+            <Link />
+          </el-icon>
           <a
             href="https://github.com/qianguyihao/Web"
             target="_blank"
@@ -99,19 +106,19 @@
             alt="Logo"
           />
           我的主页 链接 GitHub：<a
-            href="https://github.com/Chancechance123"
+            href="https://github.com/Xuyuyu520"
             target="_blank"
             style="color: #e6a23c"
-            >Chancechance123</a
+            >Xuyuyu520</a
           >
         </el-col>
       </el-col>
-    </el-row>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from "vue";
+import { ref, onMounted, reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { ElMessage } from "element-plus";
@@ -125,6 +132,7 @@ export default {
   },
 
   setup() {
+    const formRef = ref(null); // 创建表单组件实例的引用
     //实例化userouter
     const router = useRouter();
     //onMounted()生命周期
@@ -139,18 +147,32 @@ export default {
         userType: "",
       },
       returnMsg: "",
-
+      rules: {
+        name: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 4, message: "用户名至少为4位", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, message: "密码至少为6位", trigger: "blur" },
+        ],
+      },
       login_1: () => {
+        // 校验用户名和密码是否为空
+        if (!data.user.name || !data.user.password) {
+          ElMessage.error({
+            message: "用户名和密码不能为空",
+            type: "error",
+          });
+          return;
+        }
+
         axios
-          .post(
-            "login?username=" +
-              data.user.name +
-              "&password=" +
-              data.user.password
-          )
+          .post("login", {
+            username: data.user.name,
+          })
           .then((response) => {
             var temps = response.data;
-            debugger;
             if (temps.code == 0) {
               ElMessage.success({
                 message: "登录成功",
@@ -160,10 +182,36 @@ export default {
               userStore.setUser(temps.data);
               router.push({ path: "/home" });
             } else {
-              data.returnMsg = temps.msg;
+              // 显示后端返回的错误提示信息
+              if (temps.code == 1001) {
+                // 用户名错误
+                ElMessage.error({
+                  message: "用户名错误",
+                  type: "error",
+                });
+              } else if (temps.code == 1002) {
+                // 密码错误
+                ElMessage.error({
+                  message: "密码错误",
+                  type: "error",
+                });
+              } else {
+                data.returnMsg = temps.msg;
+                ElMessage.error({
+                  message: "请检查用户名或密码是否有误",
+                  type: "error",
+                });
+              }
             }
           })
-          .catch((error) => console.log(error)); // 请求失败处理
+          .catch((error) => {
+            // 请求失败处理
+            console.log(error);
+            ElMessage.error({
+              message: "请求失败，请稍后重试",
+              type: "error",
+            });
+          });
       },
 
       reg: () => {
@@ -172,8 +220,22 @@ export default {
         });
       },
     });
+    const login = () => {
+      formRef.value.validate((valid) => {
+        if (valid) {
+          // 表单验证通过，执行登录逻辑
+          console.log("表单验证通过，可以执行登录逻辑");
+        } else {
+          // 表单验证失败，显示错误信息
+          console.log("表单验证失败");
+        }
+      });
+    };
 
     return {
+      // 返回组件中需要的属性和方法
+      formRef,
+      login,
       ...toRefs(data),
     };
   },
@@ -181,15 +243,21 @@ export default {
 </script>
 
 <style lang="scss" scoped="scoped">
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
 .logo-container {
   width: 65px;
-  height: 65px;
+  height: 100px;
   max-width: 100%;
+  max-height: 100%;
 }
 
 .login {
   background-image: url("https://pic3.zhimg.com/v2-3b83e03ec8352b504e7a3dab903a9c66_r.jpg");
-  background-size: 100% 100%;
   background-size: cover;
   background-color: transparent;
   height: 100%;
@@ -197,7 +265,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: last;
+  align-items: center;
 
   .el-card__body {
     padding: 0;

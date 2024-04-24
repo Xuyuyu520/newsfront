@@ -74,13 +74,13 @@
             <el-icon style="vertical-align: middle">
               <UploadFilled />
             </el-icon>
-            <span style="vertical-align: middle">新闻上传下载-管理员</span>
+            <span style="vertical-align: middle">新闻文章-管理员</span>
           </template>
           <el-menu-item index="/category">
-            <span style="vertical-align: middle">新闻类型</span>
+            <span style="vertical-align: middle">新闻文章类型</span>
           </el-menu-item>
           <el-menu-item index="/articleInfo">
-            <span style="vertical-align: middle">新闻信息</span>
+            <span style="vertical-align: middle">新闻文章信息</span>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>
@@ -222,6 +222,7 @@ export default {
 </script>
 <style lang="scss">
 .layout-container {
+
   .el-header {
     padding: 0;
     background: var(--bg1);

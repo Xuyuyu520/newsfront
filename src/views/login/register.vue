@@ -52,13 +52,13 @@
             </el-form-item>
             <el-form-item>
               <el-button type="primary" size="medium" round @click="register_1"
-                >提交注册</el-button
-              >
+                >提交注册
+              </el-button>
               <el-button type="primary" size="medium" round @click="backToLogin"
-                >返回登录</el-button
-              >
+                >返回登录
+              </el-button>
               <a href="mailto:your_admin@example.com" class="button-link"
-                >请牢记密码</a
+                >请牢记密码,忘记联系管理员</a
               >
             </el-form-item>
           </el-form>
@@ -102,10 +102,30 @@ export default {
     };
 
     const register_1 = () => {
-      if (data.userForm.password != data.userForm.repassword) {
-        alert("两次密码不一致");
+      // 判断所有字段是否都不为空
+      if (
+        !data.userForm.username ||
+        !data.userForm.password ||
+        !data.userForm.repassword ||
+        !data.userForm.phone ||
+        !data.userForm.nickname
+      ) {
+        ElMessage.success({
+          message: "所有字段都不能为空",
+          type: "error",
+        });
         return;
       }
+
+      // 判断两次密码是否一致
+      if (data.userForm.password != data.userForm.repassword) {
+        ElMessage.success({
+          message: "两次密码不一致",
+          type: "error",
+        });
+        return;
+      }
+
       axios
         .post("register", data.userForm)
         .then((response) => {
